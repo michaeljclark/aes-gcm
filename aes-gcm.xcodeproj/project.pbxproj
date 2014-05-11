@@ -7,8 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		65B9E94819176C1D00DDE62E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E94719176C1D00DDE62E /* main.cpp */; };
-		65B9E94A19176C1D00DDE62E /* aes_gcm.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 65B9E94919176C1D00DDE62E /* aes_gcm.1 */; };
+		65B9E95119176C6100DDE62E /* aes-gcm-test.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95019176C6100DDE62E /* aes-gcm-test.c */; };
+		65B9E95319176D0300DDE62E /* aes-gcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95219176D0300DDE62E /* aes-gcm.c */; };
+		65B9E96219176D9600DDE62E /* aes-cbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95719176D9600DDE62E /* aes-cbc.c */; };
+		65B9E96319176D9600DDE62E /* aes-ccm.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95819176D9600DDE62E /* aes-ccm.c */; };
+		65B9E96419176D9600DDE62E /* aes-ctr.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95919176D9600DDE62E /* aes-ctr.c */; };
+		65B9E96519176D9600DDE62E /* aes-eax.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95A19176D9600DDE62E /* aes-eax.c */; };
+		65B9E96619176D9600DDE62E /* aes-encblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95B19176D9600DDE62E /* aes-encblock.c */; };
+		65B9E96719176D9600DDE62E /* aes-internal-dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95C19176D9600DDE62E /* aes-internal-dec.c */; };
+		65B9E96819176D9600DDE62E /* aes-internal-enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95D19176D9600DDE62E /* aes-internal-enc.c */; };
+		65B9E96919176D9600DDE62E /* aes-internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95E19176D9600DDE62E /* aes-internal.c */; };
+		65B9E96A19176D9600DDE62E /* aes-omac1.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95F19176D9600DDE62E /* aes-omac1.c */; };
+		65B9E96B19176D9600DDE62E /* aes-unwrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E96019176D9600DDE62E /* aes-unwrap.c */; };
+		65B9E96C19176D9600DDE62E /* aes-wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E96119176D9600DDE62E /* aes-wrap.c */; };
+		65B9E97819176F2100DDE62E /* aes-debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E97619176F2100DDE62E /* aes-debug.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,16 +30,31 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				65B9E94A19176C1D00DDE62E /* aes_gcm.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65685711191E33B300E19244 /* aes-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "aes-common.h"; path = "src/aes-common.h"; sourceTree = SOURCE_ROOT; };
 		65B9E94419176C1D00DDE62E /* aes-gcm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "aes-gcm"; sourceTree = BUILT_PRODUCTS_DIR; };
-		65B9E94719176C1D00DDE62E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		65B9E94919176C1D00DDE62E /* aes_gcm.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = aes_gcm.1; sourceTree = "<group>"; };
+		65B9E95019176C6100DDE62E /* aes-gcm-test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-gcm-test.c"; path = "src/aes-gcm-test.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95219176D0300DDE62E /* aes-gcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-gcm.c"; path = "src/aes-gcm.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95519176D6600DDE62E /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aes.h; path = src/aes.h; sourceTree = SOURCE_ROOT; };
+		65B9E95619176D9600DDE62E /* aes-internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "aes-internal.h"; path = "src/aes-internal.h"; sourceTree = SOURCE_ROOT; };
+		65B9E95719176D9600DDE62E /* aes-cbc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-cbc.c"; path = "src/aes-cbc.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95819176D9600DDE62E /* aes-ccm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-ccm.c"; path = "src/aes-ccm.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95919176D9600DDE62E /* aes-ctr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-ctr.c"; path = "src/aes-ctr.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95A19176D9600DDE62E /* aes-eax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-eax.c"; path = "src/aes-eax.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95B19176D9600DDE62E /* aes-encblock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-encblock.c"; path = "src/aes-encblock.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95C19176D9600DDE62E /* aes-internal-dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-internal-dec.c"; path = "src/aes-internal-dec.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95D19176D9600DDE62E /* aes-internal-enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-internal-enc.c"; path = "src/aes-internal-enc.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95E19176D9600DDE62E /* aes-internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-internal.c"; path = "src/aes-internal.c"; sourceTree = SOURCE_ROOT; };
+		65B9E95F19176D9600DDE62E /* aes-omac1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-omac1.c"; path = "src/aes-omac1.c"; sourceTree = SOURCE_ROOT; };
+		65B9E96019176D9600DDE62E /* aes-unwrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-unwrap.c"; path = "src/aes-unwrap.c"; sourceTree = SOURCE_ROOT; };
+		65B9E96119176D9600DDE62E /* aes-wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-wrap.c"; path = "src/aes-wrap.c"; sourceTree = SOURCE_ROOT; };
+		65B9E97619176F2100DDE62E /* aes-debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-debug.c"; path = "src/aes-debug.c"; sourceTree = SOURCE_ROOT; };
+		65B9E97719176F2100DDE62E /* aes-debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "aes-debug.h"; path = "src/aes-debug.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +71,7 @@
 		65B9E93B19176C1D00DDE62E = {
 			isa = PBXGroup;
 			children = (
-				65B9E94619176C1D00DDE62E /* aes-gcm */,
+				65B9E94619176C1D00DDE62E /* src */,
 				65B9E94519176C1D00DDE62E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,12 +84,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		65B9E94619176C1D00DDE62E /* aes-gcm */ = {
+		65B9E94619176C1D00DDE62E /* src */ = {
 			isa = PBXGroup;
 			children = (
-				65B9E94719176C1D00DDE62E /* main.cpp */,
-				65B9E94919176C1D00DDE62E /* aes_gcm.1 */,
+				65B9E95719176D9600DDE62E /* aes-cbc.c */,
+				65B9E95819176D9600DDE62E /* aes-ccm.c */,
+				65685711191E33B300E19244 /* aes-common.h */,
+				65B9E95919176D9600DDE62E /* aes-ctr.c */,
+				65B9E97619176F2100DDE62E /* aes-debug.c */,
+				65B9E97719176F2100DDE62E /* aes-debug.h */,
+				65B9E95A19176D9600DDE62E /* aes-eax.c */,
+				65B9E95B19176D9600DDE62E /* aes-encblock.c */,
+				65B9E95019176C6100DDE62E /* aes-gcm-test.c */,
+				65B9E95219176D0300DDE62E /* aes-gcm.c */,
+				65B9E95C19176D9600DDE62E /* aes-internal-dec.c */,
+				65B9E95D19176D9600DDE62E /* aes-internal-enc.c */,
+				65B9E95E19176D9600DDE62E /* aes-internal.c */,
+				65B9E95619176D9600DDE62E /* aes-internal.h */,
+				65B9E95F19176D9600DDE62E /* aes-omac1.c */,
+				65B9E96019176D9600DDE62E /* aes-unwrap.c */,
+				65B9E96119176D9600DDE62E /* aes-wrap.c */,
+				65B9E95519176D6600DDE62E /* aes.h */,
 			);
+			name = src;
 			path = "aes-gcm";
 			sourceTree = "<group>";
 		};
@@ -117,7 +161,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65B9E94819176C1D00DDE62E /* main.cpp in Sources */,
+				65B9E96B19176D9600DDE62E /* aes-unwrap.c in Sources */,
+				65B9E95119176C6100DDE62E /* aes-gcm-test.c in Sources */,
+				65B9E95319176D0300DDE62E /* aes-gcm.c in Sources */,
+				65B9E96919176D9600DDE62E /* aes-internal.c in Sources */,
+				65B9E96819176D9600DDE62E /* aes-internal-enc.c in Sources */,
+				65B9E96519176D9600DDE62E /* aes-eax.c in Sources */,
+				65B9E96A19176D9600DDE62E /* aes-omac1.c in Sources */,
+				65B9E96619176D9600DDE62E /* aes-encblock.c in Sources */,
+				65B9E96419176D9600DDE62E /* aes-ctr.c in Sources */,
+				65B9E96219176D9600DDE62E /* aes-cbc.c in Sources */,
+				65B9E97819176F2100DDE62E /* aes-debug.c in Sources */,
+				65B9E96319176D9600DDE62E /* aes-ccm.c in Sources */,
+				65B9E96719176D9600DDE62E /* aes-internal-dec.c in Sources */,
+				65B9E96C19176D9600DDE62E /* aes-wrap.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,6 +240,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -227,6 +285,7 @@
 				65B9E94F19176C1D00DDE62E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
