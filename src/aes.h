@@ -9,11 +9,16 @@
 #ifndef AES_H
 #define AES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define AES_FULL_UNROLL
 #define AES_SMALL_TABLES
 #define AES_BLOCK_SIZE 16
 
 #include "aes-common.h"
+#include "aes-internal.h"
 #include "aes-debug.h"
 
 void * aes_encrypt_init(const aes_uchar *key, size_t len);
@@ -65,5 +70,9 @@ int AES_WARN_UNUSED_RESULT aes_ccm_ad(const aes_uchar *key, size_t key_len, cons
                                       size_t M, const aes_uchar *crypt, size_t crypt_len,
                                       const aes_uchar *aad, size_t aad_len, const aes_uchar *auth,
                                       aes_uchar *plain);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* AES_H */
