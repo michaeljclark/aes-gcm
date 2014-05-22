@@ -2,14 +2,14 @@
  *  aes.cl
  */
 
-#define AES_SMALL_TABLES
+#undef AES_SMALL_TABLES
 
 #ifndef AES_SMALL_TABLES
 
 #define TE0(i) Te0[as_uchar4(i).w]
 #define TE1(i) Te1[as_uchar4(i).z]
 #define TE2(i) Te2[as_uchar4(i).y]
-#define TE3(i) Te3[as_uchar4(i).w]
+#define TE3(i) Te3[as_uchar4(i).x]
 #define TE41(i) (Te4[((i) >> 24) & 0xff] & 0xff000000)
 #define TE42(i) (Te4[((i) >> 16) & 0xff] & 0x00ff0000)
 #define TE43(i) (Te4[((i) >> 8) & 0xff] & 0x0000ff00)
@@ -19,7 +19,7 @@
 #define TD0(i) Td0[as_uchar4(i).w]
 #define TD1(i) Td1[as_uchar4(i).z]
 #define TD2(i) Td2[as_uchar4(i).y]
-#define TD3(i) Td3[as_uchar4(i).w]
+#define TD3(i) Td3[as_uchar4(i).x]
 #define TD41(i) (Td4[((i) >> 24) & 0xff] & 0xff000000)
 #define TD42(i) (Td4[((i) >> 16) & 0xff] & 0x00ff0000)
 #define TD43(i) (Td4[((i) >> 8) & 0xff] & 0x0000ff00)
