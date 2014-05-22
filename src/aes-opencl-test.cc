@@ -98,11 +98,18 @@ struct aes_opencl_test
         
         aes_uchar *pt = new aes_uchar[DATA_SIZE];
         if (!pt) log_error_exit("pt alloc_failed");
-        memset((void*)pt, 0xff, DATA_SIZE);
+        char c = 0x01;
+        for (size_t j = 0; j < DATA_SIZE; j+= sizeof(int)) {
+            pt[j] = (c ^= c * 7);
+        }
         
         aes_uchar *ct = new aes_uchar[DATA_SIZE];
         if (!ct) log_error_exit("pt alloc_failed");
         memset((void*)ct, 0x00, DATA_SIZE);
+
+        aes_uchar *dt = new aes_uchar[DATA_SIZE];
+        if (!dt) log_error_exit("pt alloc_failed");
+        memset((void*)dt, 0x00, DATA_SIZE);
         
         void *rk = aes_encrypt_init(key, 16);
 
@@ -117,19 +124,36 @@ struct aes_opencl_test
 
         for (int i = 0; i < 10; i++) {
             const auto t1 = high_resolution_clock::now();
+            
+            // GPU encrypt
             clcmdqueue->enqueueWriteBuffer(rk_buf, true, 0, AES_PRIV_SIZE, rk);
             clcmdqueue->enqueueWriteBuffer(pt_buf, true, 0, DATA_SIZE, pt);
             clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(64));
             clcmdqueue->enqueueReadBuffer(ct_buf, true, 0, DATA_SIZE, ct)->wait();
+            
             const auto t2 = high_resolution_clock::now();
             
-            float time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
-            log_debug("encrypted %ld MB in %f sec (%f MB/sec)", DATA_SIZE / MEGA_BYTE, time_sec, DATA_SIZE / MEGA_BYTE / time_sec);
+            // CPU encrypt
+            for (size_t j = 0; j < DATA_SIZE; j += 16) {
+                aes_rijndael_encrypt((aes_uint*)rk, 10, pt + j, dt + j);
+            }
+            
+            const auto t3 = high_resolution_clock::now();
+            
+            // Stats
+            bool pass = (memcmp(ct, dt, DATA_SIZE) == 0);
+            float gpu_time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
+            float cpu_time_sec = duration_cast<microseconds>(t3 - t2).count() / 1000000.0;
+            log_debug("encrypted %s %ld MB GPU: %f sec (%f MB/sec) CPU:%f sec (%f MB/sec)",
+                      (pass ? "PASS" : "FAIL"), DATA_SIZE / MEGA_BYTE,
+                      gpu_time_sec, DATA_SIZE / MEGA_BYTE / gpu_time_sec,
+                      cpu_time_sec, DATA_SIZE / MEGA_BYTE / cpu_time_sec);
         }
         
         aes_encrypt_deinit(rk);
         delete [] pt;
         delete [] ct;
+        delete [] dt;
     }
 };
 
