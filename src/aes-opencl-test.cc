@@ -94,7 +94,7 @@ struct aes_opencl_test
         
         static const aes_uchar key[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
         static const size_t MEGA_BYTE = 1024 * 1024;
-        static const size_t DATA_SIZE = 8 * MEGA_BYTE;
+        static const size_t DATA_SIZE = 16 * MEGA_BYTE;
         
         aes_uchar *pt = new aes_uchar[DATA_SIZE];
         if (!pt) log_error_exit("pt alloc_failed");
