@@ -2,7 +2,8 @@
  *  aes.cl
  */
 
-#undef AES_SMALL_TABLES
+#undef AES_USE_UINT
+#define AES_SMALL_TABLES
 
 #ifndef AES_SMALL_TABLES
 
@@ -813,10 +814,18 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk, int Nr, __global const u
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
+#ifndef AES_USE_UINT
 	s0 = GETU32(pt     ) ^ rk[0];
 	s1 = GETU32(pt +  4) ^ rk[1];
 	s2 = GETU32(pt +  8) ^ rk[2];
 	s3 = GETU32(pt + 12) ^ rk[3];
+#else
+    // NOTE endianness of all tables and key schedule would need to be adjusted
+	s0 = *(__global const uint*)(pt     ) ^ rk[0];
+	s1 = *(__global const uint*)(pt +  4) ^ rk[1];
+	s2 = *(__global const uint*)(pt +  8) ^ rk[2];
+	s3 = *(__global const uint*)(pt + 12) ^ rk[3];
+#endif
     
 #define ROUND(i,d,s) \
 d##0 = TE0(s##0) ^ TE1(s##1) ^ TE2(s##2) ^ TE3(s##3) ^ rk[4 * i]; \
@@ -840,6 +849,7 @@ d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
+#ifndef AES_USE_UINT
 	s0 = TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0];
 	PUTU32(ct     , s0);
 	s1 = TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1];
@@ -848,6 +858,13 @@ d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
 	PUTU32(ct +  8, s2);
 	s3 = TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3];
 	PUTU32(ct + 12, s3);
+#else
+    // NOTE endianness of all tables and key schedule would need to be adjusted
+	*(__global uint*)(ct     ) = TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0];
+	*(__global uint*)(ct +  4) = TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1];
+	*(__global uint*)(ct +  8) = TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ rk[2];
+	*(__global uint*)(ct + 12) = TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3];
+#endif
 }
 
 __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const uchar *ct_buf /*[16]*/, __global uchar *pt_buf /*[16]*/)
@@ -862,10 +879,18 @@ __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const 
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
+#ifndef AES_USE_UINT
 	s0 = GETU32(ct     ) ^ rk[0];
 	s1 = GETU32(ct +  4) ^ rk[1];
 	s2 = GETU32(ct +  8) ^ rk[2];
 	s3 = GETU32(ct + 12) ^ rk[3];
+#else
+    // NOTE endianness of all tables and key schedule would need to be adjusted
+	s0 = *(__global const uint*)(ct     ) ^ rk[0];
+	s1 = *(__global const uint*)(ct +  4) ^ rk[1];
+	s2 = *(__global const uint*)(ct +  8) ^ rk[2];
+	s3 = *(__global const uint*)(ct + 12) ^ rk[3];
+#endif
     
 #define ROUND(i,d,s) \
 d##0 = TD0(s##0) ^ TD1(s##3) ^ TD2(s##2) ^ TD3(s##1) ^ rk[4 * i]; \
@@ -889,6 +914,7 @@ d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
+#ifndef AES_USE_UINT
 	s0 = TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0];
 	PUTU32(pt     , s0);
 	s1 = TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1];
@@ -897,5 +923,12 @@ d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
 	PUTU32(pt +  8, s2);
 	s3 = TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3];
 	PUTU32(pt + 12, s3);
+#else
+    // NOTE endianness of all tables and key schedule would need to be adjusted
+	*(__global uint*)(pt     ) = TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0];
+	*(__global uint*)(pt +  4) = TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1];
+	*(__global uint*)(pt +  8) = TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2];
+	*(__global uint*)(pt + 12) = TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3];
+#endif
 }
 
