@@ -3,12 +3,20 @@
  */
 
 #define AES_SMALL_TABLES
+#define AES_USE_UCHAR_SWIZZLE
 
 /* macros to access bytes of a uint */
+#ifdef AES_USE_UCHAR_SWIZZLE
 #define uint_uchar_1(i) as_uchar4(i).w
 #define uint_uchar_2(i) as_uchar4(i).z
 #define uint_uchar_3(i) as_uchar4(i).y
 #define uint_uchar_4(i) as_uchar4(i).x
+#else
+#define uint_uchar_1(i) ((i >> 24) & 0xff)
+#define uint_uchar_2(i) ((i >> 16) & 0xff)
+#define uint_uchar_3(i) ((i >> 8) & 0xff)
+#define uint_uchar_4(i) ((i) & 0xff)
+#endif
 
 #ifndef AES_SMALL_TABLES
 
