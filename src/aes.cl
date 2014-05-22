@@ -2,7 +2,7 @@
  *  aes.cl
  */
 
-#undef AES_USE_UINT
+#define AES_USE_UINT
 #define AES_SMALL_TABLES
 
 #ifndef AES_SMALL_TABLES
@@ -17,14 +17,6 @@
 #define TE42(i) (Te4[((i) >> 16) & 0xff] & 0x00ff0000)
 #define TE43(i) (Te4[((i) >> 8) & 0xff] & 0x0000ff00)
 #define TE44(i) (Te4[(i) & 0xff] & 0x000000ff)
-#define TE421(i) (Te4[((i) >> 16) & 0xff] & 0xff000000)
-#define TE432(i) (Te4[((i) >> 8) & 0xff] & 0x00ff0000)
-#define TE443(i) (Te4[(i) & 0xff] & 0x0000ff00)
-#define TE414(i) (Te4[((i) >> 24) & 0xff] & 0x000000ff)
-#define TE411(i) (Te4[((i) >> 24) & 0xff] & 0xff000000)
-#define TE422(i) (Te4[((i) >> 16) & 0xff] & 0x00ff0000)
-#define TE433(i) (Te4[((i) >> 8) & 0xff] & 0x0000ff00)
-#define TE444(i) (Te4[(i) & 0xff] & 0x000000ff)
 #define TE4(i) (Te4[(i)] & 0x000000ff)
 
 #define TD0(i) Td0[((i) >> 24) & 0xff]
@@ -57,14 +49,6 @@ static inline uint rotr(uint val, int bits)
 #define TE42(i) (Te0[((i) >> 16) & 0xff] & 0x00ff0000)
 #define TE43(i) (Te0[((i) >> 8) & 0xff] & 0x0000ff00)
 #define TE44(i) ((Te0[(i) & 0xff] >> 8) & 0x000000ff)
-#define TE421(i) ((Te0[((i) >> 16) & 0xff] << 8) & 0xff000000)
-#define TE432(i) (Te0[((i) >> 8) & 0xff] & 0x00ff0000)
-#define TE443(i) (Te0[(i) & 0xff] & 0x0000ff00)
-#define TE414(i) ((Te0[((i) >> 24) & 0xff] >> 8) & 0x000000ff)
-#define TE411(i) ((Te0[((i) >> 24) & 0xff] << 8) & 0xff000000)
-#define TE422(i) (Te0[((i) >> 16) & 0xff] & 0x00ff0000)
-#define TE433(i) (Te0[((i) >> 8) & 0xff] & 0x0000ff00)
-#define TE444(i) ((Te0[(i) & 0xff] >> 8) & 0x000000ff)
 #define TE4(i) ((Te0[(i)] >> 8) & 0x000000ff)
 
 #define TD0(i) Td0[((i) >> 24) & 0xff]
@@ -820,11 +804,10 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk, int Nr, __global const u
 	s2 = GETU32(pt +  8) ^ rk[2];
 	s3 = GETU32(pt + 12) ^ rk[3];
 #else
-    // NOTE endianness of all tables and key schedule would need to be adjusted
-	s0 = *(__global const uint*)(pt     ) ^ rk[0];
-	s1 = *(__global const uint*)(pt +  4) ^ rk[1];
-	s2 = *(__global const uint*)(pt +  8) ^ rk[2];
-	s3 = *(__global const uint*)(pt + 12) ^ rk[3];
+	s0 = as_uint(as_uchar4(*(__global const uint*)(pt     )).wzyx) ^ rk[0];
+	s1 = as_uint(as_uchar4(*(__global const uint*)(pt +  4)).wzyx) ^ rk[1];
+	s2 = as_uint(as_uchar4(*(__global const uint*)(pt +  8)).wzyx) ^ rk[2];
+	s3 = as_uint(as_uchar4(*(__global const uint*)(pt + 12)).wzyx) ^ rk[3];
 #endif
     
 #define ROUND(i,d,s) \
@@ -859,11 +842,10 @@ d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
 	s3 = TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3];
 	PUTU32(ct + 12, s3);
 #else
-    // NOTE endianness of all tables and key schedule would need to be adjusted
-	*(__global uint*)(ct     ) = TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0];
-	*(__global uint*)(ct +  4) = TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1];
-	*(__global uint*)(ct +  8) = TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ rk[2];
-	*(__global uint*)(ct + 12) = TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3];
+	*(__global uint*)(ct     ) = as_uint(as_uchar4(TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0]).wzyx);
+	*(__global uint*)(ct +  4) = as_uint(as_uchar4(TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1]).wzyx);
+	*(__global uint*)(ct +  8) = as_uint(as_uchar4(TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ rk[2]).wzyx);
+	*(__global uint*)(ct + 12) = as_uint(as_uchar4(TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3]).wzyx);
 #endif
 }
 
@@ -885,11 +867,10 @@ __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const 
 	s2 = GETU32(ct +  8) ^ rk[2];
 	s3 = GETU32(ct + 12) ^ rk[3];
 #else
-    // NOTE endianness of all tables and key schedule would need to be adjusted
-	s0 = *(__global const uint*)(ct     ) ^ rk[0];
-	s1 = *(__global const uint*)(ct +  4) ^ rk[1];
-	s2 = *(__global const uint*)(ct +  8) ^ rk[2];
-	s3 = *(__global const uint*)(ct + 12) ^ rk[3];
+	s0 = as_uint(as_uchar4(*(__global const uint*)(ct     )).wzyx) ^ rk[0];
+	s1 = as_uint(as_uchar4(*(__global const uint*)(ct +  4)).wzyx) ^ rk[1];
+	s2 = as_uint(as_uchar4(*(__global const uint*)(ct +  8)).wzyx) ^ rk[2];
+	s3 = as_uint(as_uchar4(*(__global const uint*)(ct + 12)).wzyx) ^ rk[3];
 #endif
     
 #define ROUND(i,d,s) \
@@ -924,11 +905,10 @@ d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
 	s3 = TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3];
 	PUTU32(pt + 12, s3);
 #else
-    // NOTE endianness of all tables and key schedule would need to be adjusted
-	*(__global uint*)(pt     ) = TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0];
-	*(__global uint*)(pt +  4) = TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1];
-	*(__global uint*)(pt +  8) = TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2];
-	*(__global uint*)(pt + 12) = TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3];
+	*(__global uint*)(pt     ) = as_uint(as_uchar4(TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0]).wzyx);
+	*(__global uint*)(pt +  4) = as_uint(as_uchar4(TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1]).wzyx);
+	*(__global uint*)(pt +  8) = as_uint(as_uchar4(TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2]).wzyx);
+	*(__global uint*)(pt + 12) = as_uint(as_uchar4(TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3]).wzyx);
 #endif
 }
 
