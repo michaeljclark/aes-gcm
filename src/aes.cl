@@ -2,7 +2,8 @@
  *  aes.cl
  */
 
-#undef AES_SMALL_TABLES
+#define AES_SMALL_TABLES
+#undef AES_SMALL_TABLE_SWIZZLE
 
 #ifndef AES_SMALL_TABLES
 
@@ -32,18 +33,30 @@ static inline uint rotr(uint val, int bits)
 }
 
 #define TE0(i) Te0[as_uchar4(i).w]
+#ifdef AES_SMALL_TABLE_SWIZZLE
+#define TE1(i) as_uint(as_uchar4(Te0[as_uchar4(i).z]).yzwx)
+#define TE2(i) as_uint(as_uchar4(Te0[as_uchar4(i).y]).zwxy)
+#define TE3(i) as_uint(as_uchar4(Te0[as_uchar4(i).x]).wxyz)
+#else
 #define TE1(i) rotr(Te0[as_uchar4(i).z], 8)
 #define TE2(i) rotr(Te0[as_uchar4(i).y], 16)
 #define TE3(i) rotr(Te0[as_uchar4(i).x], 24)
+#endif
 #define TE41(i) ((Te0[as_uchar4(i).w] << 8) & 0xff000000)
 #define TE42(i) (Te0[as_uchar4(i).z] & 0x00ff0000)
 #define TE43(i) (Te0[as_uchar4(i).y] & 0x0000ff00)
 #define TE44(i) ((Te0[as_uchar4(i).x] >> 8) & 0x000000ff)
 
 #define TD0(i) Td0[as_uchar4(i).w]
+#ifdef AES_SMALL_TABLE_SWIZZLE
+#define TD1(i) as_uint(as_uchar4(Td0[as_uchar4(i).z]).yzwx)
+#define TD2(i) as_uint(as_uchar4(Td0[as_uchar4(i).y]).zwxy)
+#define TD3(i) as_uint(as_uchar4(Td0[as_uchar4(i).x]).wxyz)
+#else
 #define TD1(i) rotr(Td0[as_uchar4(i).z], 8)
 #define TD2(i) rotr(Td0[as_uchar4(i).y], 16)
 #define TD3(i) rotr(Td0[as_uchar4(i).x], 24)
+#endif
 #define TD41(i) (Td4s[as_uchar4(i).w] << 24)
 #define TD42(i) (Td4s[as_uchar4(i).z] << 16)
 #define TD43(i) (Td4s[as_uchar4(i).y] << 8)
