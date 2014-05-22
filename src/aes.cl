@@ -5,25 +5,31 @@
 #define AES_SMALL_TABLES
 #undef AES_SMALL_TABLE_SWIZZLE
 
+/* macros to access bytes of a uint */
+#define uint_uchar_1(i) as_uchar4(i).w
+#define uint_uchar_2(i) as_uchar4(i).z
+#define uint_uchar_3(i) as_uchar4(i).y
+#define uint_uchar_4(i) as_uchar4(i).x
+
 #ifndef AES_SMALL_TABLES
 
-#define TE0(i) Te0[as_uchar4(i).w]
-#define TE1(i) Te1[as_uchar4(i).z]
-#define TE2(i) Te2[as_uchar4(i).y]
-#define TE3(i) Te3[as_uchar4(i).x]
-#define TE41(i) (Te4[as_uchar4(i).w] & 0xff000000)
-#define TE42(i) (Te4[as_uchar4(i).z] & 0x00ff0000)
-#define TE43(i) (Te4[as_uchar4(i).y] & 0x0000ff00)
-#define TE44(i) (Te4[as_uchar4(i).x] & 0x000000ff)
+#define TE0(i) Te0[uint_uchar_1(i)]
+#define TE1(i) Te1[uint_uchar_2(i)]
+#define TE2(i) Te2[uint_uchar_3(i)]
+#define TE3(i) Te3[uint_uchar_4(i)]
+#define TE41(i) (Te4[uint_uchar_1(i)] & 0xff000000)
+#define TE42(i) (Te4[uint_uchar_2(i)] & 0x00ff0000)
+#define TE43(i) (Te4[uint_uchar_3(i)] & 0x0000ff00)
+#define TE44(i) (Te4[uint_uchar_4(i)] & 0x000000ff)
 
-#define TD0(i) Td0[as_uchar4(i).w]
-#define TD1(i) Td1[as_uchar4(i).z]
-#define TD2(i) Td2[as_uchar4(i).y]
-#define TD3(i) Td3[as_uchar4(i).x]
-#define TD41(i) (Td4[as_uchar4(i).w] & 0xff000000)
-#define TD42(i) (Td4[as_uchar4(i).z] & 0x00ff0000)
-#define TD43(i) (Td4[as_uchar4(i).y] & 0x0000ff00)
-#define TD44(i) (Td4[as_uchar4(i).x] & 0x000000ff)
+#define TD0(i) Td0[uint_uchar_1(i)]
+#define TD1(i) Td1[uint_uchar_2(i)]
+#define TD2(i) Td2[uint_uchar_3(i)]
+#define TD3(i) Td3[uint_uchar_4(i)]
+#define TD41(i) (Td4[uint_uchar_1(i)] & 0xff000000)
+#define TD42(i) (Td4[uint_uchar_2(i)] & 0x00ff0000)
+#define TD43(i) (Td4[uint_uchar_3(i)] & 0x0000ff00)
+#define TD44(i) (Td4[uint_uchar_4(i)] & 0x000000ff)
 
 #else /* AES_SMALL_TABLES */
 
@@ -32,35 +38,35 @@ static inline uint rotr(uint val, int bits)
 	return (val >> bits) | (val << (32 - bits));
 }
 
-#define TE0(i) Te0[as_uchar4(i).w]
+#define TE0(i) Te0[uint_uchar_1(i)]
 #ifdef AES_SMALL_TABLE_SWIZZLE
-#define TE1(i) as_uint(as_uchar4(Te0[as_uchar4(i).z]).yzwx)
-#define TE2(i) as_uint(as_uchar4(Te0[as_uchar4(i).y]).zwxy)
-#define TE3(i) as_uint(as_uchar4(Te0[as_uchar4(i).x]).wxyz)
+#define TE1(i) as_uint(as_uchar4(Te0[uint_uchar_2(i)]).yzwx)
+#define TE2(i) as_uint(as_uchar4(Te0[uint_uchar_3(i)]).zwxy)
+#define TE3(i) as_uint(as_uchar4(Te0[uint_uchar_4(i)]).wxyz)
 #else
-#define TE1(i) rotr(Te0[as_uchar4(i).z], 8)
-#define TE2(i) rotr(Te0[as_uchar4(i).y], 16)
-#define TE3(i) rotr(Te0[as_uchar4(i).x], 24)
+#define TE1(i) rotr(Te0[uint_uchar_2(i)], 8)
+#define TE2(i) rotr(Te0[uint_uchar_3(i)], 16)
+#define TE3(i) rotr(Te0[uint_uchar_4(i)], 24)
 #endif
-#define TE41(i) ((Te0[as_uchar4(i).w] << 8) & 0xff000000)
-#define TE42(i) (Te0[as_uchar4(i).z] & 0x00ff0000)
-#define TE43(i) (Te0[as_uchar4(i).y] & 0x0000ff00)
-#define TE44(i) ((Te0[as_uchar4(i).x] >> 8) & 0x000000ff)
+#define TE41(i) ((Te0[uint_uchar_1(i)] << 8) & 0xff000000)
+#define TE42(i) (Te0[uint_uchar_2(i)] & 0x00ff0000)
+#define TE43(i) (Te0[uint_uchar_3(i)] & 0x0000ff00)
+#define TE44(i) ((Te0[uint_uchar_4(i)] >> 8) & 0x000000ff)
 
-#define TD0(i) Td0[as_uchar4(i).w]
+#define TD0(i) Td0[uint_uchar_1(i)]
 #ifdef AES_SMALL_TABLE_SWIZZLE
-#define TD1(i) as_uint(as_uchar4(Td0[as_uchar4(i).z]).yzwx)
-#define TD2(i) as_uint(as_uchar4(Td0[as_uchar4(i).y]).zwxy)
-#define TD3(i) as_uint(as_uchar4(Td0[as_uchar4(i).x]).wxyz)
+#define TD1(i) as_uint(as_uchar4(Td0[uint_uchar_2(i)]).yzwx)
+#define TD2(i) as_uint(as_uchar4(Td0[uint_uchar_3(i)]).zwxy)
+#define TD3(i) as_uint(as_uchar4(Td0[uint_uchar_4(i)]).wxyz)
 #else
-#define TD1(i) rotr(Td0[as_uchar4(i).z], 8)
-#define TD2(i) rotr(Td0[as_uchar4(i).y], 16)
-#define TD3(i) rotr(Td0[as_uchar4(i).x], 24)
+#define TD1(i) rotr(Td0[uint_uchar_2(i)], 8)
+#define TD2(i) rotr(Td0[uint_uchar_3(i)], 16)
+#define TD3(i) rotr(Td0[uint_uchar_4(i)], 24)
 #endif
-#define TD41(i) (Td4s[as_uchar4(i).w] << 24)
-#define TD42(i) (Td4s[as_uchar4(i).z] << 16)
-#define TD43(i) (Td4s[as_uchar4(i).y] << 8)
-#define TD44(i) (Td4s[as_uchar4(i).x])
+#define TD41(i) (Td4s[uint_uchar_1(i)] << 24)
+#define TD42(i) (Td4s[uint_uchar_2(i)] << 16)
+#define TD43(i) (Td4s[uint_uchar_3(i)] << 8)
+#define TD44(i) (Td4s[uint_uchar_4(i)])
 
 #endif /* AES_SMALL_TABLES */
 
