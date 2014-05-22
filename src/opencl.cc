@@ -286,12 +286,16 @@ opencl_context::opencl_context(opencl_device_list devices, bool request_gl_shari
                 NULL
             };
         #elif defined(__linux__)
+#if 0
             cl_context_properties properties[] = {
                 CL_GL_CONTEXT_KHR, (cl_context_properties) glXGetCurrentContext(),
                 CL_GLX_DISPLAY_KHR, (cl_context_properties) glXGetCurrentDisplay(),
                 CL_CONTEXT_PLATFORM, (cl_context_properties) platform->platform_id,
                 NULL
             };
+#else
+        cl_context_properties properties[] = { NULL };
+#endif
         #elif defined(_WIN32)
             cl_context_properties properties[] = {
                 CL_GL_CONTEXT_KHR, (cl_context_properties) wglGetCurrentContext(),
