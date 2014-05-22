@@ -6,9 +6,14 @@ OBJS =	src/aes-opencl-test.o \
 	src/logging.o \
 	src/opencl.o
 
-CFLAGS =   -Wall -std=c99
-CXXFLAGS = -Wall -std=c++11 -I/opt/AMDAPP/include/
+CFLAGS =   -O3 -Wall -std=c99
+CXXFLAGS = -O3 -Wall -std=c++11 -I/opt/AMDAPP/include/
 LDFLAGS = -lOpenCL
+
+all: aes-opencl-test
+
+clean:
+	rm -f src/*.o aes-opencl-test
 
 aes-opencl-test: $(OBJS)
 	g++  $(LDFLAGS) -o $@ $(OBJS)
