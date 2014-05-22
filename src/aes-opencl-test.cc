@@ -119,7 +119,7 @@ struct aes_opencl_test
             const auto t1 = high_resolution_clock::now();
             clcmdqueue->enqueueWriteBuffer(rk_buf, true, 0, AES_PRIV_SIZE, rk);
             clcmdqueue->enqueueWriteBuffer(pt_buf, true, 0, DATA_SIZE, pt);
-            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(128));
+            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(64));
             clcmdqueue->enqueueReadBuffer(ct_buf, true, 0, DATA_SIZE, ct)->wait();
             const auto t2 = high_resolution_clock::now();
             
