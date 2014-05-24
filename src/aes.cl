@@ -19,11 +19,7 @@
 #define uint_uchar_4(i) ((i) & 0xff)
 #endif
 
-#if AES_SMALL_TABLES_LOCAL
-#define RK(i) rk_local[i]
-#else
 #define RK(i) rk[i]
-#endif
 
 #if AES_SMALL_TABLES_LOCAL
 
@@ -795,12 +791,8 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk, int Nr, __global const u
 
 #if AES_SMALL_TABLES_LOCAL
     __local uint Te0_local[256];
-    __local uint rk_local[56];
     
     Te0_local[get_local_id(0)] = Te0[get_local_id(0)];
-    if (get_local_id(0) < (size_t)(Nr * 4)) {
-        rk_local[get_local_id(0)] = rk[get_local_id(0)];
-    }
     barrier(CLK_LOCAL_MEM_FENCE);
 #endif
 
@@ -852,13 +844,9 @@ __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const 
 #if AES_SMALL_TABLES_LOCAL
     __local uint Td0_local[256];
     __local uchar Td4s_local[256];
-    __local uint rk_local[56];
     
     Td0_local[get_local_id(0)] = Td0[get_local_id(0)];
     Td4s_local[get_local_id(0)] = Td4s_local[get_local_id(0)];
-    if (get_local_id(0) < (size_t)(Nr * 4)) {
-        rk_local[get_local_id(0)] = rk[get_local_id(0)];
-    }
     barrier(CLK_LOCAL_MEM_FENCE);
 #endif
     
