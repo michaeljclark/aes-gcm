@@ -783,9 +783,9 @@ __constant uchar Td4s[256] = {
 #endif /* !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL) */
 
 
-__kernel void aes_rijndael_encrypt(__constant uint *rk_global, int Nr, __global const uchar *pt_buf /*[16]*/, __global uchar *ct_buf /*[16]*/)
+__kernel void aes_rijndael_encrypt(__constant uint4 *rk_global, int Nr, __global const uint4 *pt_buf /*[16]*/, __global uint4 *ct_buf /*[16]*/)
 {
-	uint s0, s1, s2, s3, t0, t1, t2, t3;
+	uint4 s, t;
 	int r;
 
 #if AES_SMALL_TABLES_LOCAL
@@ -795,10 +795,9 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk_global, int Nr, __global 
 #endif
 
 #if AES_KEY_LOCAL
-    __local uint rk_local[60];
-    __local uint* rk = rk_local;
-    size_t rk_num = (Nr + 1) << 2;
-    if (get_local_id(0) < rk_num) {
+    __local uint4 rk_local[15];
+    __local uint4* rk = rk_local;
+    if (get_local_id(0) <= (size_t)Nr) {
         rk_local[get_local_id(0)] = rk_global[get_local_id(0)];
     }
 #else
@@ -809,34 +808,29 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk_global, int Nr, __global 
     barrier(CLK_LOCAL_MEM_FENCE);
 #endif
 
-    __global const uchar *pt = pt_buf + get_global_id(0) * 16;
-    __global uchar *ct = ct_buf + get_global_id(0) * 16;
-
     /* read block */
-    uint pt_0 = *(__global const uint*)(pt);
-    uint pt_1 = *(__global const uint*)(pt + 4);
-    uint pt_2 = *(__global const uint*)(pt + 8);
-    uint pt_3 = *(__global const uint*)(pt + 12);
+    uint4 pt = pt_buf[get_global_id(0)];
+    
 	/*
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
-	s0 = as_uint(as_uchar4(pt_0).wzyx) ^ rk[0];
-	s1 = as_uint(as_uchar4(pt_1).wzyx) ^ rk[1];
-	s2 = as_uint(as_uchar4(pt_2).wzyx) ^ rk[2];
-	s3 = as_uint(as_uchar4(pt_3).wzyx) ^ rk[3];
+	s = (uint4)(as_uint(as_uchar4(pt.s0).s3210),
+                as_uint(as_uchar4(pt.s1).s3210),
+                as_uint(as_uchar4(pt.s2).s3210),
+                as_uint(as_uchar4(pt.s3).s3210)) ^ rk[0];
     
-#define ROUND(i,d,s) \
-d##0 = TE0(s##0) ^ TE1(s##1) ^ TE2(s##2) ^ TE3(s##3) ^ rk[4 * i]; \
-d##1 = TE0(s##1) ^ TE1(s##2) ^ TE2(s##3) ^ TE3(s##0) ^ rk[4 * i + 1]; \
-d##2 = TE0(s##2) ^ TE1(s##3) ^ TE2(s##0) ^ TE3(s##1) ^ rk[4 * i + 2]; \
-d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
+#define ROUND(i,X,Y) \
+X = (uint4)(TE0(Y.s0) ^ TE1(Y.s1) ^ TE2(Y.s2) ^ TE3(Y.s3), \
+            TE0(Y.s1) ^ TE1(Y.s2) ^ TE2(Y.s3) ^ TE3(Y.s0), \
+            TE0(Y.s2) ^ TE1(Y.s3) ^ TE2(Y.s0) ^ TE3(Y.s1), \
+            TE0(Y.s3) ^ TE1(Y.s0) ^ TE2(Y.s1) ^ TE3(Y.s2)) ^ rk[i]
     
 	/* Nr - 1 full rounds: */
 	r = Nr >> 1;
 	for (;;) {
 		ROUND(1,t,s);
-		rk += 8;
+		rk += 2;
 		if (--r == 0)
 			break;
 		ROUND(0,s,t);
@@ -848,16 +842,16 @@ d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
-	uint ct_0 = as_uint(as_uchar4(TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0]).wzyx);
-	uint ct_1 = as_uint(as_uchar4(TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1]).wzyx);
-	uint ct_2 = as_uint(as_uchar4(TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ rk[2]).wzyx);
-	uint ct_3 = as_uint(as_uchar4(TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3]).wzyx);
+	s = (uint4)(TE41(t.s0) ^ TE42(t.s1) ^ TE43(t.s2) ^ TE44(t.s3),
+                TE41(t.s1) ^ TE42(t.s2) ^ TE43(t.s3) ^ TE44(t.s0),
+                TE41(t.s2) ^ TE42(t.s3) ^ TE43(t.s0) ^ TE44(t.s1),
+                TE41(t.s3) ^ TE42(t.s0) ^ TE43(t.s1) ^ TE44(t.s2)) ^ rk[0];
     
     /* write block */
-    *(__global uint*)(ct) = ct_0;
-    *(__global uint*)(ct + 4) = ct_1;
-    *(__global uint*)(ct + 8) = ct_2;
-    *(__global uint*)(ct + 12) = ct_3;
+    ct_buf[get_global_id(0)] = (uint4)(as_uint(as_uchar4(s.s0).s3210),
+                                       as_uint(as_uchar4(s.s1).s3210),
+                                       as_uint(as_uchar4(s.s2).s3210),
+                                       as_uint(as_uchar4(s.s3).s3210));
 }
 
 __kernel void aes_rijndael_decrypt(__constant uint *rk_global, int Nr,  __global const uchar *ct_buf /*[16]*/, __global uchar *pt_buf /*[16]*/)
