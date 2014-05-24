@@ -92,9 +92,10 @@ struct aes_opencl_test
         opencl_kernel_ptr aes_rijndael_encrypt_kernel = aesprog->getKernel("aes_rijndael_encrypt");
         opencl_kernel_ptr aes_rijndael_decrypt_kernel = aesprog->getKernel("aes_rijndael_decrypt");
         
+        static const int num_runs = 5;
         static const aes_uchar key[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
         static const size_t MEGA_BYTE = 1024 * 1024;
-        static const size_t DATA_SIZE = 16 * MEGA_BYTE;
+        static const size_t DATA_SIZE = 32 * MEGA_BYTE;
         
         aes_uchar *pt = new aes_uchar[DATA_SIZE];
         if (!pt) log_error_exit("pt alloc_failed");
@@ -122,11 +123,29 @@ struct aes_opencl_test
         aes_rijndael_encrypt_kernel->setArg(2, pt_buf);
         aes_rijndael_encrypt_kernel->setArg(3, ct_buf);
 
-        for (int i = 0; i < 10; i++) {
+        clcmdqueue->enqueueWriteBuffer(rk_buf, true, 0, AES_PRIV_SIZE, rk)->wait();
+        
+        // Memory reads and writes
+        for (int i = 0; i < num_runs; i++) {
+            const auto t1 = high_resolution_clock::now();
+            clcmdqueue->enqueueWriteBuffer(pt_buf, true, 0, DATA_SIZE, pt)->wait();
+            const auto t2 = high_resolution_clock::now();
+            clcmdqueue->enqueueReadBuffer(ct_buf, true, 0, DATA_SIZE, ct)->wait();
+            const auto t3 = high_resolution_clock::now();
+            
+            float write_time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
+            float read_time_sec = duration_cast<microseconds>(t3 - t2).count() / 1000000.0;
+            log_debug("memory test %ld MB write: %f sec (%f MB/sec) read: %f sec (%f MB/sec)",
+                      DATA_SIZE / MEGA_BYTE,
+                      write_time_sec, DATA_SIZE / MEGA_BYTE / write_time_sec,
+                      read_time_sec, DATA_SIZE / MEGA_BYTE / read_time_sec);
+        }
+        
+        // Copy host buffer to device -> GPU encrypt -> Copy device buffer to host
+        for (int i = 0; i < num_runs; i++) {
             const auto t1 = high_resolution_clock::now();
             
             // GPU encrypt
-            clcmdqueue->enqueueWriteBuffer(rk_buf, true, 0, AES_PRIV_SIZE, rk);
             clcmdqueue->enqueueWriteBuffer(pt_buf, true, 0, DATA_SIZE, pt);
             clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(256));
             clcmdqueue->enqueueReadBuffer(ct_buf, true, 0, DATA_SIZE, ct)->wait();
@@ -144,18 +163,19 @@ struct aes_opencl_test
             bool pass = (memcmp(ct, dt, DATA_SIZE) == 0);
             float gpu_time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
             float cpu_time_sec = duration_cast<microseconds>(t3 - t2).count() / 1000000.0;
-            log_debug("encrypted %s %ld MB GPU: %f sec (%f MB/sec) CPU:%f sec (%f MB/sec)",
+            log_debug("encrypt %s %ld MB GPU: %f sec (%f MB/sec) CPU: %f sec (%f MB/sec)",
                       (pass ? "PASS" : "FAIL"), DATA_SIZE / MEGA_BYTE,
                       gpu_time_sec, DATA_SIZE / MEGA_BYTE / gpu_time_sec,
                       cpu_time_sec, DATA_SIZE / MEGA_BYTE / cpu_time_sec);
         }
 
-        for (int i = 0; i < 10; i++) {
+        // GPU encryption only (no memory transfers)
+        for (int i = 0; i < num_runs; i++) {
             const auto t1 = high_resolution_clock::now();
             clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(256))->wait();
             const auto t2 = high_resolution_clock::now();
             float gpu_time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
-            log_debug("encrypted %ld MB GPU: %f sec (%f MB/sec) [excluding host <-> device transfer]",
+            log_debug("encrypt %ld MB GPU: %f sec (%f MB/sec) [no memory transfer]",
                       DATA_SIZE / MEGA_BYTE,
                       gpu_time_sec, DATA_SIZE / MEGA_BYTE / gpu_time_sec);
         }
