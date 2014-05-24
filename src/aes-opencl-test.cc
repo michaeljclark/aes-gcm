@@ -128,7 +128,7 @@ struct aes_opencl_test
             // GPU encrypt
             clcmdqueue->enqueueWriteBuffer(rk_buf, true, 0, AES_PRIV_SIZE, rk);
             clcmdqueue->enqueueWriteBuffer(pt_buf, true, 0, DATA_SIZE, pt);
-            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(128));
+            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(256));
             clcmdqueue->enqueueReadBuffer(ct_buf, true, 0, DATA_SIZE, ct)->wait();
             
             const auto t2 = high_resolution_clock::now();
@@ -152,7 +152,7 @@ struct aes_opencl_test
 
         for (int i = 0; i < 10; i++) {
             const auto t1 = high_resolution_clock::now();
-            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(128))->wait();
+            clcmdqueue->enqueueNDRangeKernel(aes_rijndael_encrypt_kernel, opencl_dim(DATA_SIZE / 16), opencl_dim(256))->wait();
             const auto t2 = high_resolution_clock::now();
             float gpu_time_sec = duration_cast<microseconds>(t2 - t1).count() / 1000000.0;
             log_debug("encrypted %ld MB GPU: %f sec (%f MB/sec) [excluding host <-> device transfer]",

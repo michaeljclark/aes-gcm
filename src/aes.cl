@@ -2,11 +2,12 @@
  *  aes.cl
  */
 
-#define AES_SMALL_TABLES
-#define AES_USE_UCHAR_SWIZZLE
+#define AES_SMALL_TABLES 0
+#define AES_SMALL_TABLES_LOCAL 1
+#define AES_USE_UCHAR_SWIZZLE 1
 
 /* macros to access bytes of a uint */
-#ifdef AES_USE_UCHAR_SWIZZLE
+#if AES_USE_UCHAR_SWIZZLE
 #define uint_uchar_1(i) as_uchar4(i).w
 #define uint_uchar_2(i) as_uchar4(i).z
 #define uint_uchar_3(i) as_uchar4(i).y
@@ -18,27 +19,33 @@
 #define uint_uchar_4(i) ((i) & 0xff)
 #endif
 
-#ifndef AES_SMALL_TABLES
+#if AES_SMALL_TABLES_LOCAL
+#define RK(i) rk_local[i]
+#else
+#define RK(i) rk[i]
+#endif
 
-#define TE0(i) Te0[uint_uchar_1(i)]
-#define TE1(i) Te1[uint_uchar_2(i)]
-#define TE2(i) Te2[uint_uchar_3(i)]
-#define TE3(i) Te3[uint_uchar_4(i)]
-#define TE41(i) (Te4[uint_uchar_1(i)] & 0xff000000)
-#define TE42(i) (Te4[uint_uchar_2(i)] & 0x00ff0000)
-#define TE43(i) (Te4[uint_uchar_3(i)] & 0x0000ff00)
-#define TE44(i) (Te4[uint_uchar_4(i)] & 0x000000ff)
+#if AES_SMALL_TABLES_LOCAL
 
-#define TD0(i) Td0[uint_uchar_1(i)]
-#define TD1(i) Td1[uint_uchar_2(i)]
-#define TD2(i) Td2[uint_uchar_3(i)]
-#define TD3(i) Td3[uint_uchar_4(i)]
-#define TD41(i) (Td4[uint_uchar_1(i)] & 0xff000000)
-#define TD42(i) (Td4[uint_uchar_2(i)] & 0x00ff0000)
-#define TD43(i) (Td4[uint_uchar_3(i)] & 0x0000ff00)
-#define TD44(i) (Td4[uint_uchar_4(i)] & 0x000000ff)
+#define TE0(i) Te0_local[uint_uchar_1(i)]
+#define TE1(i) rotate(Te0_local[uint_uchar_2(i)], (uint)24)
+#define TE2(i) rotate(Te0_local[uint_uchar_3(i)], (uint)16)
+#define TE3(i) rotate(Te0_local[uint_uchar_4(i)], (uint)8)
+#define TE41(i) ((Te0_local[uint_uchar_1(i)] << 8) & 0xff000000)
+#define TE42(i) (Te0_local[uint_uchar_2(i)] & 0x00ff0000)
+#define TE43(i) (Te0_local[uint_uchar_3(i)] & 0x0000ff00)
+#define TE44(i) ((Te0_local[uint_uchar_4(i)] >> 8) & 0x000000ff)
 
-#else /* AES_SMALL_TABLES */
+#define TD0(i) Td0_local[uint_uchar_1(i)]
+#define TD1(i) rotate(Td0_local[uint_uchar_2(i)], (uint)24)
+#define TD2(i) rotate(Td0_local[uint_uchar_3(i)], (uint)16)
+#define TD3(i) rotate(Td0_local[uint_uchar_4(i)], (uint)8)
+#define TD41(i) (Td4s_local[uint_uchar_1(i)] << 24)
+#define TD42(i) (Td4s_local[uint_uchar_2(i)] << 16)
+#define TD43(i) (Td4s_local[uint_uchar_3(i)] << 8)
+#define TD44(i) (Td4s_local[uint_uchar_4(i)])
+
+#elif AES_SMALL_TABLES
 
 #define TE0(i) Te0[uint_uchar_1(i)]
 #define TE1(i) rotate(Te0[uint_uchar_2(i)], (uint)24)
@@ -58,7 +65,27 @@
 #define TD43(i) (Td4s[uint_uchar_3(i)] << 8)
 #define TD44(i) (Td4s[uint_uchar_4(i)])
 
-#endif /* AES_SMALL_TABLES */
+#else
+
+#define TE0(i) Te0[uint_uchar_1(i)]
+#define TE1(i) Te1[uint_uchar_2(i)]
+#define TE2(i) Te2[uint_uchar_3(i)]
+#define TE3(i) Te3[uint_uchar_4(i)]
+#define TE41(i) (Te4[uint_uchar_1(i)] & 0xff000000)
+#define TE42(i) (Te4[uint_uchar_2(i)] & 0x00ff0000)
+#define TE43(i) (Te4[uint_uchar_3(i)] & 0x0000ff00)
+#define TE44(i) (Te4[uint_uchar_4(i)] & 0x000000ff)
+
+#define TD0(i) Td0[uint_uchar_1(i)]
+#define TD1(i) Td1[uint_uchar_2(i)]
+#define TD2(i) Td2[uint_uchar_3(i)]
+#define TD3(i) Td3[uint_uchar_4(i)]
+#define TD41(i) (Td4[uint_uchar_1(i)] & 0xff000000)
+#define TD42(i) (Td4[uint_uchar_2(i)] & 0x00ff0000)
+#define TD43(i) (Td4[uint_uchar_3(i)] & 0x0000ff00)
+#define TD44(i) (Td4[uint_uchar_4(i)] & 0x000000ff)
+
+#endif
 
 __constant uint Te0[256] = {
     0xc66363a5U, 0xf87c7c84U, 0xee777799U, 0xf67b7b8dU,
@@ -126,7 +153,7 @@ __constant uint Te0[256] = {
     0x824141c3U, 0x299999b0U, 0x5a2d2d77U, 0x1e0f0f11U,
     0x7bb0b0cbU, 0xa85454fcU, 0x6dbbbbd6U, 0x2c16163aU,
 };
-#ifndef AES_SMALL_TABLES
+#if !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL)
 __constant uint Te1[256] = {
     0xa5c66363U, 0x84f87c7cU, 0x99ee7777U, 0x8df67b7bU,
     0x0dfff2f2U, 0xbdd66b6bU, 0xb1de6f6fU, 0x5491c5c5U,
@@ -391,7 +418,7 @@ __constant uint Te4[256] = {
     0x41414141U, 0x99999999U, 0x2d2d2d2dU, 0x0f0f0f0fU,
     0xb0b0b0b0U, 0x54545454U, 0xbbbbbbbbU, 0x16161616U,
 };
-#endif /* AES_SMALL_TABLES */
+#endif /* !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL) */
 __constant uint Td0[256] = {
     0x51f4a750U, 0x7e416553U, 0x1a17a4c3U, 0x3a275e96U,
     0x3bab6bcbU, 0x1f9d45f1U, 0xacfa58abU, 0x4be30393U,
@@ -458,7 +485,7 @@ __constant uint Td0[256] = {
     0x39a80171U, 0x080cb3deU, 0xd8b4e49cU, 0x6456c190U,
     0x7bcb8461U, 0xd532b670U, 0x486c5c74U, 0xd0b85742U,
 };
-#ifndef AES_SMALL_TABLES
+#if !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL)
 __constant uint Td1[256] = {
     0x5051f4a7U, 0x537e4165U, 0xc31a17a4U, 0x963a275eU,
     0xcb3bab6bU, 0xf11f9d45U, 0xabacfa58U, 0x934be303U,
@@ -723,7 +750,7 @@ __constant uint Td4[256] = {
     0xe1e1e1e1U, 0x69696969U, 0x14141414U, 0x63636363U,
     0x55555555U, 0x21212121U, 0x0c0c0c0cU, 0x7d7d7d7dU,
 };
-#else /* AES_SMALL_TABLES */
+#else /* !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL) */
 __constant uchar Td4s[256] = {
     0x52U, 0x09U, 0x6aU, 0xd5U, 0x30U, 0x36U, 0xa5U, 0x38U,
     0xbfU, 0x40U, 0xa3U, 0x9eU, 0x81U, 0xf3U, 0xd7U, 0xfbU,
@@ -758,14 +785,25 @@ __constant uchar Td4s[256] = {
     0x17U, 0x2bU, 0x04U, 0x7eU, 0xbaU, 0x77U, 0xd6U, 0x26U,
     0xe1U, 0x69U, 0x14U, 0x63U, 0x55U, 0x21U, 0x0cU, 0x7dU,
 };
-#endif /* AES_SMALL_TABLES */
+#endif /* !(AES_SMALL_TABLES || AES_SMALL_TABLES_LOCAL) */
 
 
 __kernel void aes_rijndael_encrypt(__constant uint *rk, int Nr, __global const uchar *pt_buf /*[16]*/, __global uchar *ct_buf /*[16]*/)
 {
 	uint s0, s1, s2, s3, t0, t1, t2, t3;
 	int r;
+
+#if AES_SMALL_TABLES_LOCAL
+    __local uint Te0_local[256];
+    __local uint rk_local[56];
     
+    Te0_local[get_local_id(0)] = Te0[get_local_id(0)];
+    if (get_local_id(0) < (size_t)(Nr * 4)) {
+        rk_local[get_local_id(0)] = rk[get_local_id(0)];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+#endif
+
     __global const uchar *pt = pt_buf + get_global_id(0) * 16;
     __global uchar *ct = ct_buf + get_global_id(0) * 16;
 
@@ -773,16 +811,16 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk, int Nr, __global const u
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
-	s0 = as_uint(as_uchar4(*(__global const uint*)(pt     )).wzyx) ^ rk[0];
-	s1 = as_uint(as_uchar4(*(__global const uint*)(pt +  4)).wzyx) ^ rk[1];
-	s2 = as_uint(as_uchar4(*(__global const uint*)(pt +  8)).wzyx) ^ rk[2];
-	s3 = as_uint(as_uchar4(*(__global const uint*)(pt + 12)).wzyx) ^ rk[3];
+	s0 = as_uint(as_uchar4(*(__global const uint*)(pt     )).wzyx) ^ RK(0);
+	s1 = as_uint(as_uchar4(*(__global const uint*)(pt +  4)).wzyx) ^ RK(1);
+	s2 = as_uint(as_uchar4(*(__global const uint*)(pt +  8)).wzyx) ^ RK(2);
+	s3 = as_uint(as_uchar4(*(__global const uint*)(pt + 12)).wzyx) ^ RK(3);
     
 #define ROUND(i,d,s) \
-d##0 = TE0(s##0) ^ TE1(s##1) ^ TE2(s##2) ^ TE3(s##3) ^ rk[4 * i]; \
-d##1 = TE0(s##1) ^ TE1(s##2) ^ TE2(s##3) ^ TE3(s##0) ^ rk[4 * i + 1]; \
-d##2 = TE0(s##2) ^ TE1(s##3) ^ TE2(s##0) ^ TE3(s##1) ^ rk[4 * i + 2]; \
-d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
+d##0 = TE0(s##0) ^ TE1(s##1) ^ TE2(s##2) ^ TE3(s##3) ^ RK(4 * i); \
+d##1 = TE0(s##1) ^ TE1(s##2) ^ TE2(s##3) ^ TE3(s##0) ^ RK(4 * i + 1); \
+d##2 = TE0(s##2) ^ TE1(s##3) ^ TE2(s##0) ^ TE3(s##1) ^ RK(4 * i + 2); \
+d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ RK(4 * i + 3)
     
 	/* Nr - 1 full rounds: */
 	r = Nr >> 1;
@@ -800,16 +838,29 @@ d##3 = TE0(s##3) ^ TE1(s##0) ^ TE2(s##1) ^ TE3(s##2) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
-	*(__global uint*)(ct     ) = as_uint(as_uchar4(TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ rk[0]).wzyx);
-	*(__global uint*)(ct +  4) = as_uint(as_uchar4(TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ rk[1]).wzyx);
-	*(__global uint*)(ct +  8) = as_uint(as_uchar4(TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ rk[2]).wzyx);
-	*(__global uint*)(ct + 12) = as_uint(as_uchar4(TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ rk[3]).wzyx);
+	*(__global uint*)(ct     ) = as_uint(as_uchar4(TE41(t0) ^ TE42(t1) ^ TE43(t2) ^ TE44(t3) ^ RK(0)).wzyx);
+	*(__global uint*)(ct +  4) = as_uint(as_uchar4(TE41(t1) ^ TE42(t2) ^ TE43(t3) ^ TE44(t0) ^ RK(1)).wzyx);
+	*(__global uint*)(ct +  8) = as_uint(as_uchar4(TE41(t2) ^ TE42(t3) ^ TE43(t0) ^ TE44(t1) ^ RK(2)).wzyx);
+	*(__global uint*)(ct + 12) = as_uint(as_uchar4(TE41(t3) ^ TE42(t0) ^ TE43(t1) ^ TE44(t2) ^ RK(3)).wzyx);
 }
 
 __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const uchar *ct_buf /*[16]*/, __global uchar *pt_buf /*[16]*/)
 {
 	uint s0, s1, s2, s3, t0, t1, t2, t3;
 	int r;
+    
+#if AES_SMALL_TABLES_LOCAL
+    __local uint Td0_local[256];
+    __local uchar Td4s_local[256];
+    __local uint rk_local[56];
+    
+    Td0_local[get_local_id(0)] = Td0[get_local_id(0)];
+    Td4s_local[get_local_id(0)] = Td4s_local[get_local_id(0)];
+    if (get_local_id(0) < (size_t)(Nr * 4)) {
+        rk_local[get_local_id(0)] = rk[get_local_id(0)];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+#endif
     
     __global const uchar *ct = ct_buf + get_global_id(0) * 16;
     __global uchar *pt = pt_buf + get_global_id(0) * 16;
@@ -818,16 +869,16 @@ __kernel void aes_rijndael_decrypt(__constant uint *rk, int Nr,  __global const 
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
-	s0 = as_uint(as_uchar4(*(__global const uint*)(ct     )).wzyx) ^ rk[0];
-	s1 = as_uint(as_uchar4(*(__global const uint*)(ct +  4)).wzyx) ^ rk[1];
-	s2 = as_uint(as_uchar4(*(__global const uint*)(ct +  8)).wzyx) ^ rk[2];
-	s3 = as_uint(as_uchar4(*(__global const uint*)(ct + 12)).wzyx) ^ rk[3];
+	s0 = as_uint(as_uchar4(*(__global const uint*)(ct     )).wzyx) ^ RK(0);
+	s1 = as_uint(as_uchar4(*(__global const uint*)(ct +  4)).wzyx) ^ RK(1);
+	s2 = as_uint(as_uchar4(*(__global const uint*)(ct +  8)).wzyx) ^ RK(2);
+	s3 = as_uint(as_uchar4(*(__global const uint*)(ct + 12)).wzyx) ^ RK(3);
     
 #define ROUND(i,d,s) \
-d##0 = TD0(s##0) ^ TD1(s##3) ^ TD2(s##2) ^ TD3(s##1) ^ rk[4 * i]; \
-d##1 = TD0(s##1) ^ TD1(s##0) ^ TD2(s##3) ^ TD3(s##2) ^ rk[4 * i + 1]; \
-d##2 = TD0(s##2) ^ TD1(s##1) ^ TD2(s##0) ^ TD3(s##3) ^ rk[4 * i + 2]; \
-d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
+d##0 = TD0(s##0) ^ TD1(s##3) ^ TD2(s##2) ^ TD3(s##1) ^ RK(4 * i); \
+d##1 = TD0(s##1) ^ TD1(s##0) ^ TD2(s##3) ^ TD3(s##2) ^ RK(4 * i + 1); \
+d##2 = TD0(s##2) ^ TD1(s##1) ^ TD2(s##0) ^ TD3(s##3) ^ RK(4 * i + 2); \
+d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ RK(4 * i + 3)
     
 	/* Nr - 1 full rounds: */
 	r = Nr >> 1;
@@ -845,9 +896,9 @@ d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
-	*(__global uint*)(pt     ) = as_uint(as_uchar4(TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0]).wzyx);
-	*(__global uint*)(pt +  4) = as_uint(as_uchar4(TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1]).wzyx);
-	*(__global uint*)(pt +  8) = as_uint(as_uchar4(TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2]).wzyx);
-	*(__global uint*)(pt + 12) = as_uint(as_uchar4(TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3]).wzyx);
+	*(__global uint*)(pt     ) = as_uint(as_uchar4(TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ RK(0)).wzyx);
+	*(__global uint*)(pt +  4) = as_uint(as_uchar4(TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ RK(1)).wzyx);
+	*(__global uint*)(pt +  8) = as_uint(as_uchar4(TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ RK(2)).wzyx);
+	*(__global uint*)(pt + 12) = as_uint(as_uchar4(TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ RK(3)).wzyx);
 }
 
