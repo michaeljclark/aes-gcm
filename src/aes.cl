@@ -817,6 +817,7 @@ __kernel void aes_rijndael_encrypt(__constant uint *rk_global, int Nr, __global 
     uint pt_1 = *(__global const uint*)(pt + 4);
     uint pt_2 = *(__global const uint*)(pt + 8);
     uint pt_3 = *(__global const uint*)(pt + 12);
+    
 	/*
 	 * map byte array block to cipher state
 	 * and add initial round key:
@@ -892,14 +893,20 @@ __kernel void aes_rijndael_decrypt(__constant uint *rk_global, int Nr,  __global
     __global const uchar *ct = ct_buf + get_global_id(0) * 16;
     __global uchar *pt = pt_buf + get_global_id(0) * 16;
     
+    /* read block */
+    uint ct_0 = *(__global const uint*)(ct);
+    uint ct_1 = *(__global const uint*)(ct + 4);
+    uint ct_2 = *(__global const uint*)(ct + 8);
+    uint ct_3 = *(__global const uint*)(ct + 12);
+    
 	/*
 	 * map byte array block to cipher state
 	 * and add initial round key:
 	 */
-	s0 = as_uint(as_uchar4(*(__global const uint*)(ct     )).wzyx) ^ rk[0];
-	s1 = as_uint(as_uchar4(*(__global const uint*)(ct +  4)).wzyx) ^ rk[1];
-	s2 = as_uint(as_uchar4(*(__global const uint*)(ct +  8)).wzyx) ^ rk[2];
-	s3 = as_uint(as_uchar4(*(__global const uint*)(ct + 12)).wzyx) ^ rk[3];
+	s0 = as_uint(as_uchar4(ct_0).wzyx) ^ rk[0];
+	s1 = as_uint(as_uchar4(ct_1).wzyx) ^ rk[1];
+	s2 = as_uint(as_uchar4(ct_2).wzyx) ^ rk[2];
+	s3 = as_uint(as_uchar4(ct_3).wzyx) ^ rk[3];
     
 #define ROUND(i,d,s) \
 d##0 = TD0(s##0) ^ TD1(s##3) ^ TD2(s##2) ^ TD3(s##1) ^ rk[4 * i]; \
@@ -923,9 +930,15 @@ d##3 = TD0(s##3) ^ TD1(s##2) ^ TD2(s##1) ^ TD3(s##0) ^ rk[4 * i + 3]
 	 * apply last round and
 	 * map cipher state to byte array block:
 	 */
-	*(__global uint*)(pt     ) = as_uint(as_uchar4(TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0]).wzyx);
-	*(__global uint*)(pt +  4) = as_uint(as_uchar4(TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1]).wzyx);
-	*(__global uint*)(pt +  8) = as_uint(as_uchar4(TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2]).wzyx);
-	*(__global uint*)(pt + 12) = as_uint(as_uchar4(TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3]).wzyx);
+	uint pt_0 = as_uint(as_uchar4(TD41(t0) ^ TD42(t3) ^ TD43(t2) ^ TD44(t1) ^ rk[0]).wzyx);
+	uint pt_1 = as_uint(as_uchar4(TD41(t1) ^ TD42(t0) ^ TD43(t3) ^ TD44(t2) ^ rk[1]).wzyx);
+	uint pt_2 = as_uint(as_uchar4(TD41(t2) ^ TD42(t1) ^ TD43(t0) ^ TD44(t3) ^ rk[2]).wzyx);
+	uint pt_3 = as_uint(as_uchar4(TD41(t3) ^ TD42(t2) ^ TD43(t1) ^ TD44(t0) ^ rk[3]).wzyx);
+
+    /* write block */
+    *(__global uint*)(pt) = pt_0;
+    *(__global uint*)(pt + 4) = pt_1;
+    *(__global uint*)(pt + 8) = pt_2;
+    *(__global uint*)(pt + 12) = pt_3;
 }
 
