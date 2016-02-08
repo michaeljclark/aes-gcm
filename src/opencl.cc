@@ -1164,34 +1164,34 @@ bool opencl::init()
 {
     cl_uint num_platforms;
     cl_uint num_devices;
-	cl_platform_id *platform_arr;
-    cl_device_id *device_arr;
+	cl_platform_id *cl_platform_arr;
+    cl_device_id *cl_device_arr;
     
     // read platform ids
-    if (!getPlatformIDs(platform_arr, num_platforms)) return false;
+    if (!getPlatformIDs(cl_platform_arr, num_platforms)) return false;
     
     // read platform info
     for (uint platform_index = 0; platform_index < num_platforms; platform_index++) {
-        opencl_platform_ptr platform(new opencl_platform(platform_arr[platform_index], platform_index));
+        opencl_platform_ptr platform(new opencl_platform(cl_platform_arr[platform_index], platform_index));
         platforms.push_back(platform);
         
         // read device ids
-        if (!getDeviceIDs(platform_arr[platform_index], CL_DEVICE_TYPE_ALL, device_arr, num_devices)) goto fail_platforms;
+        if (!getDeviceIDs(cl_platform_arr[platform_index], CL_DEVICE_TYPE_ALL, cl_device_arr, num_devices)) goto fail_platforms;
         
         // read device info
         for (uint deviceIndex = 0; deviceIndex < num_devices; deviceIndex++) {
-            opencl_device_ptr device(new opencl_device(platform, device_arr[deviceIndex], deviceIndex));
+            opencl_device_ptr device(new opencl_device(platform, cl_device_arr[deviceIndex], deviceIndex));
             devices.push_back(device);
         }
         
-        delete [] device_arr;
+        delete [] cl_device_arr;
     }
     
-    delete [] platform_arr;
+    delete [] cl_platform_arr;
     return true;
     
 fail_platforms:
-    delete [] platform_arr;
+    delete [] cl_platform_arr;
     return false;
 }
 

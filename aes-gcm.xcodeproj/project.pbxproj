@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65056529192CA0A200B52949 /* opencl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 65056527192CA0A200B52949 /* opencl.cc */; };
+		6505652C192CA14600B52949 /* logging.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6505652A192CA14600B52949 /* logging.cc */; };
+		6505652E192CABDE00B52949 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6505652D192CABDE00B52949 /* OpenCL.framework */; };
+		65056530192CABE400B52949 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6505652F192CABE400B52949 /* OpenGL.framework */; };
+		65056540192CAD2B00B52949 /* logging.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6505652A192CA14600B52949 /* logging.cc */; };
+		65056541192CAD2B00B52949 /* opencl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 65056527192CA0A200B52949 /* opencl.cc */; };
+		65056542192CAD7600B52949 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6505652D192CABDE00B52949 /* OpenCL.framework */; };
+		65056543192CAD7600B52949 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6505652F192CABE400B52949 /* OpenGL.framework */; };
+		65056544192CAD8F00B52949 /* aes-opencl-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6505653E192CAD2100B52949 /* aes-opencl-test.cc */; };
+		6505654B192CC71200B52949 /* aes-internal-dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95C19176D9600DDE62E /* aes-internal-dec.c */; };
+		6505654C192CC71200B52949 /* aes-internal-enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95D19176D9600DDE62E /* aes-internal-enc.c */; };
+		6505654D192CC71D00B52949 /* aes-internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95E19176D9600DDE62E /* aes-internal.c */; };
+		65147D2B1930AA8A00F13769 /* aes_vec.cl in Sources */ = {isa = PBXBuildFile; fileRef = 65147D2A1930AA8A00F13769 /* aes_vec.cl */; };
 		65B9E95119176C6100DDE62E /* aes-gcm-test.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95019176C6100DDE62E /* aes-gcm-test.c */; };
 		65B9E95319176D0300DDE62E /* aes-gcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95219176D0300DDE62E /* aes-gcm.c */; };
 		65B9E96219176D9600DDE62E /* aes-cbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 65B9E95719176D9600DDE62E /* aes-cbc.c */; };
@@ -24,6 +37,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		65056533192CACEA00B52949 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		65B9E94219176C1D00DDE62E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -36,8 +58,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65056527192CA0A200B52949 /* opencl.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = opencl.cc; path = src/opencl.cc; sourceTree = SOURCE_ROOT; };
+		65056528192CA0A200B52949 /* opencl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opencl.h; path = src/opencl.h; sourceTree = SOURCE_ROOT; };
+		6505652A192CA14600B52949 /* logging.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = logging.cc; path = src/logging.cc; sourceTree = SOURCE_ROOT; };
+		6505652B192CA14600B52949 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = src/logging.h; sourceTree = SOURCE_ROOT; };
+		6505652D192CABDE00B52949 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		6505652F192CABE400B52949 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		65056535192CACEA00B52949 /* aes-opencl-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "aes-opencl-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6505653E192CAD2100B52949 /* aes-opencl-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "aes-opencl-test.cc"; path = "src/aes-opencl-test.cc"; sourceTree = SOURCE_ROOT; };
+		65056545192CB3E700B52949 /* test.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = test.cl; path = src/test.cl; sourceTree = SOURCE_ROOT; };
+		65056547192CBEC600B52949 /* aes.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = aes.cl; path = src/aes.cl; sourceTree = SOURCE_ROOT; };
+		65147D2A1930AA8A00F13769 /* aes_vec.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = aes_vec.cl; path = src/aes_vec.cl; sourceTree = SOURCE_ROOT; };
 		65685711191E33B300E19244 /* aes-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "aes-common.h"; path = "src/aes-common.h"; sourceTree = SOURCE_ROOT; };
-		65B9E94419176C1D00DDE62E /* aes-gcm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "aes-gcm"; sourceTree = BUILT_PRODUCTS_DIR; };
+		65B9E94419176C1D00DDE62E /* aes-gcm-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "aes-gcm-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65B9E95019176C6100DDE62E /* aes-gcm-test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-gcm-test.c"; path = "src/aes-gcm-test.c"; sourceTree = SOURCE_ROOT; };
 		65B9E95219176D0300DDE62E /* aes-gcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aes-gcm.c"; path = "src/aes-gcm.c"; sourceTree = SOURCE_ROOT; };
 		65B9E95519176D6600DDE62E /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aes.h; path = src/aes.h; sourceTree = SOURCE_ROOT; };
@@ -58,10 +91,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		65056532192CACEA00B52949 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65056542192CAD7600B52949 /* OpenCL.framework in Frameworks */,
+				65056543192CAD7600B52949 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		65B9E94119176C1D00DDE62E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65056530192CABE400B52949 /* OpenGL.framework in Frameworks */,
+				6505652E192CABDE00B52949 /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +115,8 @@
 		65B9E93B19176C1D00DDE62E = {
 			isa = PBXGroup;
 			children = (
+				6505652F192CABE400B52949 /* OpenGL.framework */,
+				6505652D192CABDE00B52949 /* OpenCL.framework */,
 				65B9E94619176C1D00DDE62E /* src */,
 				65B9E94519176C1D00DDE62E /* Products */,
 			);
@@ -79,7 +125,8 @@
 		65B9E94519176C1D00DDE62E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				65B9E94419176C1D00DDE62E /* aes-gcm */,
+				65B9E94419176C1D00DDE62E /* aes-gcm-test */,
+				65056535192CACEA00B52949 /* aes-opencl-test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,6 +134,15 @@
 		65B9E94619176C1D00DDE62E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				65056545192CB3E700B52949 /* test.cl */,
+				65056547192CBEC600B52949 /* aes.cl */,
+				65147D2A1930AA8A00F13769 /* aes_vec.cl */,
+				6505653E192CAD2100B52949 /* aes-opencl-test.cc */,
+				65B9E95019176C6100DDE62E /* aes-gcm-test.c */,
+				6505652A192CA14600B52949 /* logging.cc */,
+				6505652B192CA14600B52949 /* logging.h */,
+				65056527192CA0A200B52949 /* opencl.cc */,
+				65056528192CA0A200B52949 /* opencl.h */,
 				65B9E95719176D9600DDE62E /* aes-cbc.c */,
 				65B9E95819176D9600DDE62E /* aes-ccm.c */,
 				65685711191E33B300E19244 /* aes-common.h */,
@@ -95,7 +151,6 @@
 				65B9E97719176F2100DDE62E /* aes-debug.h */,
 				65B9E95A19176D9600DDE62E /* aes-eax.c */,
 				65B9E95B19176D9600DDE62E /* aes-encblock.c */,
-				65B9E95019176C6100DDE62E /* aes-gcm-test.c */,
 				65B9E95219176D0300DDE62E /* aes-gcm.c */,
 				65B9E95C19176D9600DDE62E /* aes-internal-dec.c */,
 				65B9E95D19176D9600DDE62E /* aes-internal-enc.c */,
@@ -113,9 +168,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		65B9E94319176C1D00DDE62E /* aes-gcm */ = {
+		65056534192CACEA00B52949 /* aes-opencl-test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 65B9E94D19176C1D00DDE62E /* Build configuration list for PBXNativeTarget "aes-gcm" */;
+			buildConfigurationList = 6505653B192CACEA00B52949 /* Build configuration list for PBXNativeTarget "aes-opencl-test" */;
+			buildPhases = (
+				65056531192CACEA00B52949 /* Sources */,
+				65056532192CACEA00B52949 /* Frameworks */,
+				65056533192CACEA00B52949 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "aes-opencl-test";
+			productName = "aes-opencl-test";
+			productReference = 65056535192CACEA00B52949 /* aes-opencl-test */;
+			productType = "com.apple.product-type.tool";
+		};
+		65B9E94319176C1D00DDE62E /* aes-gcm-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65B9E94D19176C1D00DDE62E /* Build configuration list for PBXNativeTarget "aes-gcm-test" */;
 			buildPhases = (
 				65B9E94019176C1D00DDE62E /* Sources */,
 				65B9E94119176C1D00DDE62E /* Frameworks */,
@@ -125,9 +197,9 @@
 			);
 			dependencies = (
 			);
-			name = "aes-gcm";
+			name = "aes-gcm-test";
 			productName = "aes-gcm";
-			productReference = 65B9E94419176C1D00DDE62E /* aes-gcm */;
+			productReference = 65B9E94419176C1D00DDE62E /* aes-gcm-test */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -151,12 +223,26 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				65B9E94319176C1D00DDE62E /* aes-gcm */,
+				65B9E94319176C1D00DDE62E /* aes-gcm-test */,
+				65056534192CACEA00B52949 /* aes-opencl-test */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		65056531192CACEA00B52949 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65056541192CAD2B00B52949 /* opencl.cc in Sources */,
+				65056544192CAD8F00B52949 /* aes-opencl-test.cc in Sources */,
+				6505654D192CC71D00B52949 /* aes-internal.c in Sources */,
+				6505654C192CC71200B52949 /* aes-internal-enc.c in Sources */,
+				65056540192CAD2B00B52949 /* logging.cc in Sources */,
+				6505654B192CC71200B52949 /* aes-internal-dec.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		65B9E94019176C1D00DDE62E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -166,10 +252,13 @@
 				65B9E95319176D0300DDE62E /* aes-gcm.c in Sources */,
 				65B9E96919176D9600DDE62E /* aes-internal.c in Sources */,
 				65B9E96819176D9600DDE62E /* aes-internal-enc.c in Sources */,
+				65147D2B1930AA8A00F13769 /* aes_vec.cl in Sources */,
+				6505652C192CA14600B52949 /* logging.cc in Sources */,
 				65B9E96519176D9600DDE62E /* aes-eax.c in Sources */,
 				65B9E96A19176D9600DDE62E /* aes-omac1.c in Sources */,
 				65B9E96619176D9600DDE62E /* aes-encblock.c in Sources */,
 				65B9E96419176D9600DDE62E /* aes-ctr.c in Sources */,
+				65056529192CA0A200B52949 /* opencl.cc in Sources */,
 				65B9E96219176D9600DDE62E /* aes-cbc.c in Sources */,
 				65B9E97819176F2100DDE62E /* aes-debug.c in Sources */,
 				65B9E96319176D9600DDE62E /* aes-ccm.c in Sources */,
@@ -181,6 +270,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		6505653C192CACEA00B52949 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		6505653D192CACEA00B52949 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		65B9E94B19176C1D00DDE62E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -269,6 +376,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6505653B192CACEA00B52949 /* Build configuration list for PBXNativeTarget "aes-opencl-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6505653C192CACEA00B52949 /* Debug */,
+				6505653D192CACEA00B52949 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		65B9E93F19176C1D00DDE62E /* Build configuration list for PBXProject "aes-gcm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -278,7 +394,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		65B9E94D19176C1D00DDE62E /* Build configuration list for PBXNativeTarget "aes-gcm" */ = {
+		65B9E94D19176C1D00DDE62E /* Build configuration list for PBXNativeTarget "aes-gcm-test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				65B9E94E19176C1D00DDE62E /* Debug */,

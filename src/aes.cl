@@ -4,7 +4,7 @@
 
 #define AES_SMALL_TABLES 0
 #define AES_SMALL_TABLES_LOCAL 1
-#define AES_KEY_LOCAL 1
+#define AES_KEY_LOCAL 0
 #define AES_USE_UCHAR_SWIZZLE 1
 
 /* macros to access bytes of a uint */
